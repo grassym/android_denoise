@@ -1,13 +1,25 @@
 package com.example.android_denoise;
 
+import java.io.File;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
-public class DenoiseMainActivity extends Activity {
-
+@SuppressLint("ShowToast") public class DenoiseMainActivity extends Activity {
+	private static final int SELECT_PICTURE = 1;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,13 +35,50 @@ public class DenoiseMainActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if (id == R.id.action_open) {
+        	Intent intent_open = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        	intent_open.setType("image/*");
+        	Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,getString(R.string.select_picture)), SELECT_PICTURE);
+        	
+            return true;
+        }
+        if (id == R.id.action_save) {
+        	
+            return true;
+        }
         if (id == R.id.action_settings) {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+    {
+        super.onActivityResult(requestCode, resultCode, data); 
+
+        switch(requestCode) { 
+        case SELECT_PICTURE:
+            if(resultCode == RESULT_OK){  
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String filePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
+                Integer w = yourSelectedImage.getWidth(), h = yourSelectedImage.getHeight();
+                
+            }
+        }
+
     }
 }
