@@ -80,7 +80,7 @@ import android.widget.Toast;
                 Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
                 Integer w = yourSelectedImage.getWidth(), h = yourSelectedImage.getHeight();
                 
-                ((MyGLSurfaceView)mGLView).getRenderer().setupTexture(yourSelectedImage, getApplicationContext());
+                //((MyGLSurfaceView)mGLView).getRenderer().setupTexture(yourSelectedImage, getApplicationContext());
             }
         }
 
