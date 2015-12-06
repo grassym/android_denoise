@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -19,11 +20,13 @@ import android.widget.Toast;
 
 @SuppressLint("ShowToast") public class DenoiseMainActivity extends Activity {
 	private static final int SELECT_PICTURE = 1;
-	
+	private GLSurfaceView mGLView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_denoise_main);
+        mGLView = new MyGLSurfaceView(this);
+        setContentView(mGLView);
     }
 
     @Override
@@ -77,6 +80,7 @@ import android.widget.Toast;
                 Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
                 Integer w = yourSelectedImage.getWidth(), h = yourSelectedImage.getHeight();
                 
+                ((MyGLSurfaceView)mGLView).getRenderer().setupTexture(yourSelectedImage, getApplicationContext());
             }
         }
 
