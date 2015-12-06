@@ -16,31 +16,24 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 	
 	protected float mTexSet = 1.0f;
 	
-	public void setupTexture(Bitmap image, Context context){
+	public volatile float mAngle;
+
+    public float getAngle() {
+        return mAngle;
+    }
+
+    public void setAngle(float angle) {
+        mAngle = angle;
+    }
+
+	public void setupTexture(Context context, String path){
 		mTexSet = 1.0f - mTexSet;
 		int[] textures = new int[1];
 	    GLES20.glGenTextures(1, textures, 0);
 
-	    // texturecount is just a public int in MyActivity extends Activity
-	    // I use this because I have issues with glGenTextures() not working                
-//	    textures[0] = context.texturecount;
-//	    context.texturecount++;
-
-	    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0]);
-
-	    //Create Nearest Filtered Texture
-	    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
-	    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-
-	    //Different possible texture parameters, e.g. GLES20.GL_CLAMP_TO_EDGE
-	    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_REPEAT);
-	    GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_REPEAT);
-
-	    GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, image, 0);
-
-	    image.recycle();   
-
-	    textureID = textures[0];
+	    int noisy_tex = TextureHelper.loadTextureFromFile(context, path);
+	    
+	    textureID = noisy_tex;
 	}
 	
 	public static int loadShader(int type, String shaderCode){

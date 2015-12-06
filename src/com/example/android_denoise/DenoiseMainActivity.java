@@ -77,12 +77,25 @@ import android.widget.Toast;
                 String filePath = cursor.getString(columnIndex);
                 cursor.close();
 
-                Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-                Integer w = yourSelectedImage.getWidth(), h = yourSelectedImage.getHeight();
-                
-                //((MyGLSurfaceView)mGLView).getRenderer().setupTexture(yourSelectedImage, getApplicationContext());
+                ((MyGLSurfaceView)mGLView).getRenderer().setupTexture(getApplicationContext(), filePath);
             }
         }
 
     }
+    
+    @Override
+	protected void onResume() 
+	{
+		// The activity must call the GL surface view's onResume() on activity onResume().
+		super.onResume();
+		mGLView.onResume();
+	}
+
+	@Override
+	protected void onPause() 
+	{
+		// The activity must call the GL surface view's onPause() on activity onPause().
+		super.onPause();
+		mGLView.onPause();
+	}
 }
