@@ -77,7 +77,7 @@ import android.widget.Toast;
                 String filePath = cursor.getString(columnIndex);
                 cursor.close();
 
-                ((MyGLSurfaceView)mGLView).getRenderer().setupTexture(getApplicationContext(), filePath);
+                ((MyGLSurfaceView)mGLView).getRenderer().loadTexture(filePath);
             }
         }
 
