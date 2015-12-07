@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import android.content.Context;
@@ -72,23 +73,31 @@ public class MyTexture {
 		initPrograms(actvity_context);
 	}
 	
+	private FloatBuffer mTextureBuffer; 
+	protected void setTextureCoordinates(float[] textureCoords) {
+		// float is 4 bytes, therefore we multiply the number if
+	        // vertices with 4.
+		ByteBuffer byteBuf = ByteBuffer.allocateDirect(
+	                                           textureCoords.length * 4);
+		byteBuf.order(ByteOrder.nativeOrder());
+		mTextureBuffer = byteBuf.asFloatBuffer();
+		mTextureBuffer.put(textureCoords);
+		mTextureBuffer.position(0);
+	}
+	
 	public void render(float param_sigma, int param_square){
-		// Add program to OpenGL environment
-        GLES20.glUseProgram(m_init_lines_program);
-        
-        // Prepare the triangle data
-        
-        //Bind texture
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, m_textures[0]);
-        //GLES20.glViewport(0, 0, m_tex_width, m_tex_height);
-        
-      	final int _quadi[] = { 0, 1, 2, 2, 3, 0 };
-        IntBuffer _qib;
-        _qib = ByteBuffer.allocateDirect(_quadi.length
-				* 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-		_qib.put(_quadi);
-		_qib.position(0);
-        GLES20.glDrawElements(GLES20.GL_TRIANGLES, _quadi.length, GLES20.GL_UNSIGNED_INT, _qib);
+		GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, m_textures[0]);
+		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+		GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+		
+		float textureCoordinates[] = {0.0f, 1.0f,
+                1.0f, 1.0f,
+                0.0f, 0.0f,
+                1.0f, 0.0f };
+		setTextureCoordinates(textureCoordinates);
+		
+		GLES20.glEnableVertexAttribArray(0);
+	    GLES20.glVertexAttribPointer(0, 3, GLES20.GL_FLOAT, false, 0, mTextureBuffer);
+	    GLES20.glDrawElements(GLES20.GL_TRIANGLES, mTextureBuffer.capacity(), GLES20.GL_UNSIGNED_INT, mTextureBuffer);
 	}
 }

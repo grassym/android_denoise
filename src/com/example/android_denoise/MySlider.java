@@ -50,14 +50,14 @@ class MySlider
 		final float[] line_data = {
 				-0.95f, 0.95f, 0.0f, 
 	            0.95f, 0.95f, 0.0f, 
-	            0.95f, 0.9f, 0.0f,
-	            -0.95f, 0.9f, 0.0f
+	            0.95f, 0.93f, 0.0f,
+	            -0.95f, 0.93f, 0.0f
 		};
 		final float[] circle_data = {
-				-0.9f, 0.97f, 0.0f, 
-	            -0.8f, 0.97f, 0.0f, 
-	            -0.8f, 0.87f, 0.0f,
-	            -0.9f, 0.87f, 0.0f
+				-0.7f, 0.97f, 0.0f, 
+	            -0.63f, 0.97f, 0.0f, 
+	            -0.63f, 0.89f, 0.0f,
+	            -0.7f, 0.89f, 0.0f
 		};
 		mLineVertices4 = ByteBuffer.allocateDirect(line_data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 		mLineVertices4.put(line_data).position(0);		
@@ -77,7 +77,6 @@ class MySlider
 	public void initProgram(){
 		final String vertexShader =
 				"uniform mat4 u_MVPMatrix;      \n"		// A constant representing the combined model/view/projection matrix.
-				
 			  + "attribute vec4 a_Position;     \n"		// Per-vertex position information we will pass in.
 			  + "void main()                    \n"		// The entry point for our vertex shader.
 			  + "{                              \n"

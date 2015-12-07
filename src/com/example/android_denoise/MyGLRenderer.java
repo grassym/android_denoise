@@ -96,15 +96,23 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 		GLES20.glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 		setViewMatrix();
 		my_slider.initProgram();
-		loadTextureFromBitmap();
+		if(m_texture_path != null)
+			loadTextureFromBitmap();
+		else 
+		{
+			m_textures = new int[2];
+			m_textures[0] = TextureHelper.loadTextureFromResource(m_actvity_context, R.drawable.image_1);
+		}
 		my_texture.setTextures(m_textures, m_actvity_context);
+		if(m_textures[0] <= 0) throw new RuntimeException("fuck off");
     }
 
+	float m_ratio = 1.0f;
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) 
 	{
 		GLES20.glViewport(0, 0, width, height);		
-		final float ratio = (float) width / height;
+		m_ratio = (float) width / height;
 		final float near = 1.0f;
 		final float far = 2.0f;
 		Matrix.orthoM(mProjectionMatrix, 0, -1.0f, 1.0f, -1.0f, 1.0f, near, far);
