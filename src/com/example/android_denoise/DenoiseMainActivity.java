@@ -20,18 +20,22 @@ import android.widget.Toast;
 
 @SuppressLint("ShowToast") public class DenoiseMainActivity extends Activity {
 	private static final int SELECT_PICTURE = 1;
-	private GLSurfaceView mGLView;
+	private MyGLSurfaceView mGLView;
 
+	void reallocView(String path_to_texture){
+		mGLView = new MyGLSurfaceView(this);
+		mGLView.setFilePath(path_to_texture);
+		setContentView(mGLView);
+	}
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGLView = new MyGLSurfaceView(this);
-        setContentView(mGLView);
+        reallocView(null);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.denoise_main, menu);
         return true;
     }
@@ -77,7 +81,7 @@ import android.widget.Toast;
                 String filePath = cursor.getString(columnIndex);
                 cursor.close();
 
-                ((MyGLSurfaceView)mGLView).reallocRenderer(filePath);
+                reallocView(filePath);
             }
         }
 

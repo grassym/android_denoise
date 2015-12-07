@@ -10,29 +10,21 @@ import android.widget.Toast;
 public class MyGLSurfaceView extends GLSurfaceView {
 
     private MyGLRenderer mRenderer;
-    
-    public void reallocRenderer(String path_to_texture)
-    {
-    	mRenderer = null;
-    	mRenderer = new MyGLRenderer();
-        setRenderer(mRenderer);
-        queueEvent(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    String m_file_path;
+    public void setFilePath(String file_path){
+    	m_file_path = file_path;
     }
     
     public MyGLSurfaceView(Context context){
         super(context);
         setEGLContextClientVersion(2);
-        reallocRenderer(null);
+        mRenderer = new MyGLRenderer();
+        mRenderer.m_texture_path = m_file_path;
+        mRenderer.m_actvity_context = context;
+        setRenderer(mRenderer);
+        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
-
+    
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         float x = e.getRawX();
