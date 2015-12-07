@@ -21,63 +21,61 @@ import android.widget.Toast;
 
 class Slider 
 {
+	final float[] m_line_color, m_circle_color;
 	/** Store our model data in a float buffer. */
-	private final FloatBuffer mTriangle3Vertices;
-	/** How many bytes per float. */
-	private final int mBytesPerFloat = 4;
-	/** Offset of the position data. */
-	private final int mPositionOffset = 0;
+	private FloatBuffer mLineVertices4;
+	private FloatBuffer mCircleVertices4;
 	/** How many elements per vertex. XYZ+RGBA*/
-	private final int mStrideBytes = 3 * mBytesPerFloat; // XYZ, removed RGBA	
+	private final int mStrideBytes = 3 * 4; // XYZ * bytes per float
 	/** Size of the position data in elements. */
 	private final int mPositionDataSize = 3;
 	
-	private void drawCircle(){
-		
+	private void drawCircle(int programHandle, int mMVPMatrixHandle, int mPositionHandle, float[] mMVPMatrix, float[] mViewMatrix, float[] mModelMatrix, float[] mProjectionMatrix){
+		mCircleVertices4.position(0);
+		GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false, mStrideBytes, mCircleVertices4);        
+		GLES20.glEnableVertexAttribArray(mPositionHandle);       
+		GLES20.glUniform4f(GLES20.glGetUniformLocation(programHandle, "v_Color"), m_circle_color[0], m_circle_color[1], m_circle_color[2], m_circle_color[3]);
+		Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+		Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
+		GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
 	}
-	private void drawLine(){
-		
+	private void drawLine(int programHandle, int mMVPMatrixHandle, int mPositionHandle, float[] mMVPMatrix, float[] mViewMatrix, float[] mModelMatrix, float[] mProjectionMatrix){
+		mLineVertices4.position(0);
+		GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false, mStrideBytes, mLineVertices4);        
+		GLES20.glEnableVertexAttribArray(mPositionHandle);       
+		GLES20.glUniform4f(GLES20.glGetUniformLocation(programHandle, "v_Color"), m_line_color[0], m_line_color[1], m_line_color[2], m_line_color[3]);        
+		Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
+		Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
+		GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
 	}
-	public Slider(){
+	public Slider(float[] line_color, float[] circle_color){
+		m_line_color = line_color;
+		m_circle_color = circle_color;
 		final float[] line_data = {
-				// X, Y, Z, // R, G, B, A
-	            -0.95f, 0.95f, 0.0f, 
+				-0.95f, 0.95f, 0.0f, 
 	            0.95f, 0.95f, 0.0f, 
 	            0.95f, 0.9f, 0.0f,
 	            -0.95f, 0.9f, 0.0f
 		};
-		
-		// Initialize the buffers.
-		mTriangle3Vertices = ByteBuffer.allocateDirect(line_data.length * mBytesPerFloat)
-        .order(ByteOrder.nativeOrder()).asFloatBuffer();
-					
-		mTriangle3Vertices.put(line_data).position(0);		
+		final float[] circle_data = {
+				-0.9f, 0.97f, 0.0f, 
+	            -0.8f, 0.97f, 0.0f, 
+	            -0.8f, 0.87f, 0.0f,
+	            -0.9f, 0.87f, 0.0f
+		};
+		mLineVertices4 = ByteBuffer.allocateDirect(line_data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mLineVertices4.put(line_data).position(0);		
+		mCircleVertices4 = ByteBuffer.allocateDirect(line_data.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+		mCircleVertices4.put(circle_data).position(0);		
 	}
 	public void slide(float line_percent){
 		
 	}
 	public void draw(int programHandle, int mMVPMatrixHandle, int mPositionHandle, float[] mMVPMatrix, float[] mViewMatrix, float[] mModelMatrix, float[] mProjectionMatrix){
-		FloatBuffer aTriangleBuffer = mTriangle3Vertices;
-		
-		// Pass in the position information
-		aTriangleBuffer.position(mPositionOffset);
-		GLES20.glVertexAttribPointer(mPositionHandle, mPositionDataSize, GLES20.GL_FLOAT, false,
-		        		mStrideBytes, aTriangleBuffer);        
-		                
-		GLES20.glEnableVertexAttribArray(mPositionHandle);        
-		        
-		GLES20.glUniform4f(GLES20.glGetUniformLocation(programHandle, "v_Color"), 0.0f, 1.0f, 0.0f, 1.0f);        
-		        
-		// This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
-		// (which currently contains model * view).
-		Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
-		        
-		// This multiplies the modelview matrix by the projection matrix, and stores the result in the MVP matrix
-		// (which now contains model * view * projection).
-		Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-
-		GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
-		GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, 4);
+		drawLine(programHandle, mMVPMatrixHandle, mPositionHandle, mMVPMatrix, mViewMatrix, mModelMatrix, mProjectionMatrix);
+		drawCircle(programHandle, mMVPMatrixHandle, mPositionHandle, mMVPMatrix, mViewMatrix, mModelMatrix, mProjectionMatrix);
 	}
 }
 
@@ -95,7 +93,7 @@ public class MyGLRenderer implements GLSurfaceView.Renderer {
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) 
 	{
 		// Set the background clear color to gray.
-				GLES20.glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+				GLES20.glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 			
 				// Position the eye behind the origin.
 				final float eyeX = 0.0f;
@@ -313,7 +311,7 @@ be_prepared */
 	
 	Slider my_slider;
 	public MyGLRenderer(){
-		my_slider = new Slider();
+		my_slider = new Slider(new float[]{0.8f, 0.8f, 0.8f, 1.0f}, new float[]{0.4f, 0.3f, 1.0f, 1.0f});
 	}
 	
 	@Override
