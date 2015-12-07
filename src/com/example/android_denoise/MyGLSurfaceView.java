@@ -16,14 +16,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
     	mRenderer = null;
     	mRenderer = new MyGLRenderer();
         setRenderer(mRenderer);
-        queueEvent(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				
-			}
-		});
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
     

@@ -2,6 +2,7 @@ package com.example.android_denoise;
 
 import java.io.File;
 
+import android.R;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -22,11 +23,25 @@ import android.widget.Toast;
 	private static final int SELECT_PICTURE = 1;
 	private GLSurfaceView mGLView;
 
+	MyStickySliderView m_slider_view;
+	MyStickyTextureView m_texture_view;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGLView = new MyGLSurfaceView(this);
-        setContentView(mGLView);
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_denoise_main);
+
+        m_slider_view = (MyStickySliderView) findViewById(R.id.slider_view);
+        m_texture_view = (MyStickyTextureView) findViewById(R.id.texture_view);
+
+        //Enables debug flags for Errors
+        //mSurfaceView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR);   
+        //mSurfaceView2.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR);  
+
+        m_slider_view.setRenderer(new MyGLRenderer());
+        m_texture_view.setRenderer(new MyGLRenderer());
     }
 
     @Override
