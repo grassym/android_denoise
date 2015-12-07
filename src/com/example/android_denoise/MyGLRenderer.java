@@ -213,17 +213,10 @@ be_prepared */
 	public void onSurfaceChanged(GL10 gl, int width, int height) 
 	{
 		GLES20.glViewport(0, 0, width, height);		
-	
-		// Create a new perspective projection matrix. The height will stay the same
-		// while the width will vary as per aspect ratio.
 		final float ratio = (float) width / height;
-		final float left = -ratio;
-		final float right = ratio;
-		final float bottom = -1.0f;
-		final float top = 1.0f;
 		final float near = 1.0f;
-		final float far = 10.0f;
-		Matrix.frustumM(mProjectionMatrix, 0, left, right, bottom, top, near, far);
+		final float far = 2.0f;
+		Matrix.orthoM(mProjectionMatrix, 0, -1.0f, 1.0f, -1.0f, 1.0f, near, far);
 	}
 	/**
 	 * Store the model matrix. This matrix is used to move models from object space (where each model can be thought
