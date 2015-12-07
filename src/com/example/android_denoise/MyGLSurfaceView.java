@@ -9,14 +9,28 @@ import android.widget.Toast;
 @SuppressLint("ShowToast")
 public class MyGLSurfaceView extends GLSurfaceView {
 
-    private final MyGLRenderer mRenderer;
-    public MyGLRenderer getRenderer() { return mRenderer; }
+    private MyGLRenderer mRenderer;
+    
+    public void reallocRenderer(String path_to_texture)
+    {
+    	mRenderer = null;
+    	mRenderer = new MyGLRenderer();
+        setRenderer(mRenderer);
+        queueEvent(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+    }
+    
     public MyGLSurfaceView(Context context){
         super(context);
         setEGLContextClientVersion(2);
-        mRenderer = new MyGLRenderer(this, context);
-        setRenderer(mRenderer);
-        setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+        reallocRenderer(null);
     }
 
     @Override
@@ -26,10 +40,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
         switch (e.getAction()) {
             case MotionEvent.ACTION_UP:
-
-    
-                mRenderer.setAngle(
-                        mRenderer.getAngle() + x);
+                //mRenderer.PASS_VALUES(x,y);
                 requestRender();
                 
                 Toast.makeText(getContext(), String.format("x = %d, y = %d", (int)x, (int)y), 500).show();
